@@ -6,13 +6,14 @@ public class SmallSpiderFollowPlayer : MonoBehaviour
 {
     public GameObject VRPlayer;
     public float playerDistance; // distance away from player
-    public float attackDistance = 1; //how close to do attack animation
+    public float attackDistance = -1; //how close to do attack animation
     public GameObject spider;
     public float travelSpeed = 0.05f;
     public LayerMask mask;
     public RaycastHit shot;
     public float waitTime;
     public GameObject sb;
+     bool canDamage = false;
     
 
     private void Start()
@@ -38,18 +39,30 @@ public class SmallSpiderFollowPlayer : MonoBehaviour
                 {
                     //travelSpeed = 0.05f;
                     spider.GetComponent<Animation>().Play("run");
+                    if (!spider.GetComponent<AudioSource>().isPlaying)
+                    {
+                        spider.GetComponent<AudioSource>().Play();
+                    }
                     transform.position = Vector3.MoveTowards(transform.position, VRPlayer.transform.position, travelSpeed);
                 }
                 else
                 {
+                    spider.GetComponent<Animation>().Stop("run");
                     travelSpeed = 0;
+                    spider.GetComponent<AudioSource>().Stop();
                     spider.GetComponent<Animation>().Play("attack1");
+                    if (canDamage)
+                    {
+                        
+                        Debug.Log("Doing damage to player");
+                    }
 
                 }
             }
         }
         else
         {
+            spider.GetComponent<AudioSource>().Stop();
             spider.GetComponent<Animation>().Play("death1");
             spider.AddComponent<Rigidbody>();
         }
@@ -93,7 +106,7 @@ public class SmallSpiderFollowPlayer : MonoBehaviour
     private IEnumerator waiting()
     {
         yield return new WaitForSeconds(waitTime);
-        attackDistance = 3;
+        attackDistance = 2;
 
     }
 
@@ -111,5 +124,12 @@ public class SmallSpiderFollowPlayer : MonoBehaviour
         travelSpeed = number;
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.GetComponent<Health>().isPlayer)
+        {
+            canDamage = true;
+        }
+    }
 
 }

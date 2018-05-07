@@ -14,6 +14,7 @@ public class GrabObject : MonoBehaviour
     private GrabPoint gp;
     private Flashlight flashlight;
     private Gun gun;
+    private bool flashlightOrientation = true;
 
     [HideInInspector]
     public bool canGrab;
@@ -43,7 +44,8 @@ public class GrabObject : MonoBehaviour
             }
             else
             {
-                //Debug.Log("gp was null");
+                //grabbing object
+                //Debug.Log("gp was null"); 
                 Debug.Log("Standard Grab");
                 heldObj.transform.parent = this.transform;
                 heldObj.GetComponent<Rigidbody>().isKinematic = true;
@@ -75,6 +77,21 @@ public class GrabObject : MonoBehaviour
                 Debug.Log("Turning on flashlight!");
                 flashlight.turnOnLight();
             }
+            else if (flashlight != null && device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad)) //switches orientation flashlight is held in
+            {
+                if (flashlightOrientation)
+                {
+                    heldObj.GetComponent<Transform>().localPosition = new Vector3(0.0233f, -0.0576f, -0.1937f);
+                    heldObj.GetComponent<Transform>().localRotation = setGrabPoint.rotation = Quaternion.Euler(-172.983f,173.593f,-169.225f);
+                    flashlightOrientation = false;
+                }
+                else
+                {
+                    heldObj.GetComponent<Transform>().localPosition = new Vector3(.004f, -0.086f, .056f);
+                    heldObj.GetComponent<Transform>().localRotation = setGrabPoint.rotation = Quaternion.Euler(-4.924f, 179.928f, 174.627f);
+                    flashlightOrientation = true;
+                }
+            }
             else if (gun != null && device.GetTouchDown(SteamVR_Controller.ButtonMask.Trigger))
             {
                 Debug.Log("Shot the gun!");
@@ -83,7 +100,7 @@ public class GrabObject : MonoBehaviour
             }
             else if (gun != null && device.GetTouchDown(SteamVR_Controller.ButtonMask.Touchpad))
             {
-                Debug.Log("Shot the gun!");
+                Debug.Log("Ejecting the magazine!");
                 gun.EjectMagazine();
             }
 
@@ -161,5 +178,13 @@ public class GrabObject : MonoBehaviour
         }
 
 
+    }
+
+    public void RemoveChildrenReference()
+    {
+        Debug.Log("Removing child reference! THIS IS FOR THE GUN MAGAZINE ONLY");
+        isGrabbing = false;
+        heldObj.transform.parent = null;
+        heldObj = null;
     }
 }

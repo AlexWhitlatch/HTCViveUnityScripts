@@ -108,6 +108,11 @@ public class Gun : MonoBehaviour {
     {
         if (other.gameObject.tag.Equals("PistolMagazine") && gun_magazine == null){
             //could add in code to prevent certain mags from certain guns
+            if(other.transform.parent.transform.name == "Controller (left)" || other.transform.parent.transform.name == "Controller (right)")
+            {
+                Debug.Log("I AM A GOD!!!! WHA;LDKJF;ALJDF;LAKHF;LWAKJFA;LSKDJF;ALSDKFHAWL;KDFJA;SLDKFJASL;KFJAW;LKEJF");
+                other.transform.parent.GetComponent<GrabObject>().RemoveChildrenReference();
+            }
             other.transform.parent = null;
             AttachMagazine(other);
         }
@@ -162,6 +167,7 @@ public class Gun : MonoBehaviour {
         gunMag.GetComponent<Rigidbody>().isKinematic = false;
         gunMag.GetComponent<Rigidbody>().useGravity = true;
         StartCoroutine(waiting(gunMag)); // waiting to set tag back to normal for use
+        StartCoroutine(destroyMag(gunMag));
 
     }
 
@@ -171,4 +177,12 @@ public class Gun : MonoBehaviour {
         gunMag.gameObject.tag = "PistolMagazine";
       
     }
+
+    private IEnumerator destroyMag(GameObject gunMag)
+    {
+        yield return new WaitForSeconds(10);
+        Destroy(gunMag);
+
+    }
+
 }

@@ -8,24 +8,28 @@ public class Health : MonoBehaviour {
     bool isDead = false;
     public GameObject sb;
     public float lifeTime = 70;
+    public bool isPlayer = false;
 
     // Use this for initialization
     void Start () {
-        isDead = false;
         sb = GameObject.Find("SpawnBehavior");
-        StartCoroutine(setLifeTime());
+        if (!isPlayer)
+        {
+            StartCoroutine(setLifeTime());
+        }
     }
 
     public void TakeDamage(float damage)
     {
         Debug.Log("Taking Damage");
         health -= damage;
-        if (health <= 0 && !isDead)
+        if (health <= 0 && !isDead && !isPlayer)
         {
             isDead = true;
             sb.GetComponent<SpawnBehavior>().decreaseSpawnCount();
             Destroy(gameObj, 7);
         }
+        
     }
 
     public bool CheckHealth()

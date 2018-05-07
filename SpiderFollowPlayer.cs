@@ -11,10 +11,14 @@ public class SpiderFollowPlayer : MonoBehaviour {
     public float speed;
     public LayerMask mask;
     public RaycastHit shot;
+    private bool isDead = false;
+    public AudioSource screetch;
+    public bool test = false;
 
     private void Start()
     {
         StartCoroutine(waiting()); //wait to set attack distance to avoid raycast calculation issues mid-way through terrain
+        StartCoroutine(screetchSound());
     }
 
     // Update is called once per frame
@@ -42,7 +46,9 @@ public class SpiderFollowPlayer : MonoBehaviour {
         }
         else
         {
+            if(!isDead)
             spider.GetComponent<Animation>().Play("Death");
+            isDead = true; //make true so animation only plays once
         }
 	}
 
@@ -83,9 +89,17 @@ public class SpiderFollowPlayer : MonoBehaviour {
 
     private IEnumerator waiting()
     {
-        yield return new WaitForSeconds(145);
+        yield return new WaitForSeconds(165);
         attackDistance = 33;
 
+    }
+
+
+    private IEnumerator screetchSound()
+    {
+        yield return new WaitForSeconds(65);
+        screetch.Play();
+        test = true;
     }
 
 
